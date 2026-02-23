@@ -1,0 +1,17 @@
+# 1. 初始化本地仓库
+git init
+
+# 2. 将所有文件添加到暂存区
+git add .
+
+# 3. 提交代码到本地仓库
+git commit -m "Initial commit: Crazy 8s game"
+
+# 4. 设置主分支名称为 main
+git branch -M main
+
+# 5. 关联到您截图中的远程仓库
+git remote add origin https://github.com/zhangzifan0909/crazy-8s.git
+
+# 6. 推送代码到 GitHub (此时会弹出窗口要求您登录 GitHub)
+git push -u origin main
