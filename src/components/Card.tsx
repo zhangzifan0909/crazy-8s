@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { Card as CardType } from '../types';
+import { Card as CardType, CardSkin } from '../types';
 import { SUIT_SYMBOLS, SUIT_COLORS } from '../constants';
 
 interface CardProps {
@@ -12,6 +12,7 @@ interface CardProps {
   className?: string;
   initialY?: number;
   exitY?: number;
+  skin?: CardSkin;
 }
 
 export const Card: React.FC<CardProps> = ({ 
@@ -21,8 +22,15 @@ export const Card: React.FC<CardProps> = ({
   isPlayable = false,
   className = "",
   initialY = 50,
-  exitY = -100
+  exitY = -100,
+  skin = 'blue'
 }) => {
+  const skinClasses = {
+    blue: 'bg-blue-800',
+    red: 'bg-red-800',
+    black: 'bg-zinc-900'
+  };
+
   return (
     <motion.div
       layout
@@ -39,7 +47,7 @@ export const Card: React.FC<CardProps> = ({
       onClick={isPlayable ? onClick : undefined}
       className={`
         relative w-20 h-28 sm:w-24 sm:h-36 rounded-lg card-shadow cursor-pointer transition-shadow
-        ${isFaceUp ? 'bg-white' : 'bg-blue-800'}
+        ${isFaceUp ? 'bg-white' : skinClasses[skin]}
         ${isPlayable ? 'ring-4 ring-yellow-400 shadow-xl' : ''}
         ${className}
       `}

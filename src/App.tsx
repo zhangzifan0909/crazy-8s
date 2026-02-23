@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Card as CardComponent } from './components/Card';
 import { SuitSelector } from './components/SuitSelector';
 import { RulesModal } from './components/RulesModal';
-import { Card, GameState, Suit, Rank, Difficulty } from './types';
+import { Card, GameState, Suit, Rank, Difficulty, CardSkin } from './types';
 import { createDeck, isValidMove, SUITS, SUIT_NAMES } from './constants';
-import { Trophy, RotateCcw, Info, User, Cpu, BrainCircuit, Volume2, VolumeX } from 'lucide-react';
+import { Trophy, RotateCcw, Info, User, Cpu, BrainCircuit, Volume2, VolumeX, Palette } from 'lucide-react';
 import { audioService } from './services/audioService';
 
 const INITIAL_HAND_SIZE = 8;
@@ -30,6 +30,21 @@ export default function App() {
   const [showRules, setShowRules] = useState(false);
   const [isAiThinking, setIsAiThinking] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [currentTheme, setCurrentTheme] = useState<'green' | 'blue' | 'red'>('green');
+  const [cardSkin, setCardSkin] = useState<CardSkin>('blue');
+
+  const themes = {
+    green: { dark: '#1a472a', light: '#2d5a3f' },
+    blue: { dark: '#1a2a47', light: '#2d3f5a' },
+    red: { dark: '#471a1a', light: '#5a2d2d' }
+  };
+
+  const changeTheme = (theme: 'green' | 'blue' | 'red') => {
+    setCurrentTheme(theme);
+    const root = document.documentElement;
+    root.style.setProperty('--bg-dark', themes[theme].dark);
+    root.style.setProperty('--bg-light', themes[theme].light);
+  };
 
   // Initialize Game
   const initGame = useCallback((difficulty: Difficulty = 'medium') => {
@@ -352,6 +367,41 @@ export default function App() {
             </p>
 
             <div className="flex flex-col gap-4 w-full max-w-xs">
+              <div className="flex justify-between items-center px-2 mb-2">
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest">卡牌皮肤</span>
+                  <div className="flex bg-white/5 rounded-full p-1 gap-1">
+                    {(['blue', 'red', 'black'] as const).map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => setCardSkin(s)}
+                        className={`w-8 h-8 rounded-sm transition-all border-2 ${
+                          cardSkin === s ? 'border-white scale-110' : 'border-transparent opacity-40 hover:opacity-100'
+                        }`}
+                        style={{ backgroundColor: s === 'blue' ? '#1e40af' : s === 'red' ? '#991b1b' : '#18181b' }}
+                        title={`卡牌皮肤: ${s === 'blue' ? '蓝' : s === 'red' ? '红' : '黑'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest">桌面主题</span>
+                  <div className="flex bg-white/5 rounded-full p-1 gap-1">
+                    {(['green', 'blue', 'red'] as const).map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => changeTheme(t)}
+                        className={`w-8 h-8 rounded-full transition-all border-2 ${
+                          currentTheme === t ? 'border-white scale-110' : 'border-transparent opacity-40 hover:opacity-100'
+                        }`}
+                        style={{ backgroundColor: themes[t].dark }}
+                        title={`主题: ${t === 'green' ? '绿' : t === 'blue' ? '蓝' : '红'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-3 gap-2 mb-2">
                 {(['easy', 'medium', 'hard'] as Difficulty[]).map((d) => (
                   <button
@@ -419,7 +469,45 @@ export default function App() {
                   52张标准牌 / {gameState.difficulty === 'easy' ? '简单' : gameState.difficulty === 'medium' ? '中等' : '困难'} AI
                 </span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="hidden lg:inline text-[10px] font-mono text-white/40 uppercase tracking-tighter">卡牌</span>
+                  <div className="flex bg-white/10 rounded-full p-1 gap-1">
+                    {(['blue', 'red', 'black'] as const).map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => setCardSkin(s)}
+                        className={`w-6 h-6 rounded-sm transition-all border-2 ${
+                          cardSkin === s ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'
+                        }`}
+                        style={{ 
+                          backgroundColor: s === 'blue' ? '#1e40af' : s === 'red' ? '#991b1b' : '#18181b',
+                          boxShadow: cardSkin === s ? `0 0 8px white` : 'none'
+                        }}
+                        title={`卡牌皮肤: ${s === 'blue' ? '蓝' : s === 'red' ? '红' : '黑'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="hidden lg:inline text-[10px] font-mono text-white/40 uppercase tracking-tighter">桌面</span>
+                  <div className="flex bg-white/10 rounded-full p-1 gap-1">
+                    {(['green', 'blue', 'red'] as const).map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => changeTheme(t)}
+                        className={`w-6 h-6 rounded-full transition-all border-2 ${
+                          currentTheme === t ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'
+                        }`}
+                        style={{ 
+                          backgroundColor: themes[t].dark,
+                          boxShadow: currentTheme === t ? `0 0 8px ${themes[t].light}` : 'none'
+                        }}
+                        title={`主题: ${t === 'green' ? '绿' : t === 'blue' ? '蓝' : '红'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
                 <button 
                   onClick={() => setSoundEnabled(!soundEnabled)}
                   className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
@@ -486,6 +574,7 @@ export default function App() {
                         className="scale-90 opacity-80" 
                         initialY={300}
                         exitY={400}
+                        skin={cardSkin}
                       />
                     ))}
                   </AnimatePresence>
@@ -500,7 +589,8 @@ export default function App() {
                     onClick={handleDraw}
                     className={`
                       relative w-20 h-28 sm:w-24 sm:h-36 rounded-lg card-shadow cursor-pointer
-                      bg-blue-900 border-2 border-white/20 flex items-center justify-center
+                      border-2 border-white/20 flex items-center justify-center
+                      ${cardSkin === 'blue' ? 'bg-blue-900' : cardSkin === 'red' ? 'bg-red-900' : 'bg-zinc-950'}
                       ${gameState.turn === 'player' && gameState.status === 'playing' ? 'hover:ring-4 ring-yellow-400' : 'opacity-50'}
                     `}
                   >
@@ -525,6 +615,7 @@ export default function App() {
                           card={gameState.discardPile[0]} 
                           className="absolute inset-0"
                           initialY={gameState.lastPlayBy === 'player' ? 400 : gameState.lastPlayBy === 'ai' ? -400 : 0}
+                          skin={cardSkin}
                         />
                       )}
                      </AnimatePresence>
@@ -546,7 +637,7 @@ export default function App() {
                   {gameState.message}
                 </div>
 
-                <div className="flex justify-center -space-x-8 sm:-space-x-12 h-40 sm:h-48 pb-4 overflow-x-auto max-w-full px-8">
+                <div className="flex justify-center -space-x-8 sm:-space-x-12 h-48 sm:h-56 pt-8 pb-4 overflow-x-auto max-w-full px-8">
                   <AnimatePresence>
                     {gameState.playerHand.map((card) => (
                       <CardComponent 
@@ -556,6 +647,7 @@ export default function App() {
                         onClick={() => handlePlayerPlay(card)}
                         initialY={-300}
                         exitY={-400}
+                        skin={cardSkin}
                       />
                     ))}
                   </AnimatePresence>

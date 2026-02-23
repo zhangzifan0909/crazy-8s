@@ -7,9 +7,16 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
+:root {
+  --bg-dark: #1a472a;
+  --bg-light: #2d5a3f;
+}
+
 body {
-  @apply bg-[#1a472a] text-white min-h-screen overflow-hidden;
-  background-image: radial-gradient(circle at center, #2d5a3f 0%, #1a472a 100%);
+  background-color: var(--bg-dark);
+  @apply text-white min-h-screen overflow-hidden;
+  background-image: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark) 100%);
+  transition: background 0.5s ease;
 }
 
 .card-shadow {

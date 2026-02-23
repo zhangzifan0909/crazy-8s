@@ -12,6 +12,7 @@ export type GameStatus = 'menu' | 'dealing' | 'playing' | 'won' | 'lost' | 'choo
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
 export type PlayerType = 'player' | 'ai';
+export type CardSkin = 'blue' | 'red' | 'black';
 
 export interface GameState {
   deck: Card[];
